@@ -23,7 +23,6 @@ namespace Wonnasmith
         GAME_QUIT
     }
 
-    [DefaultExecutionOrder(-1)]
     public class GameManager : Singleton<GameManager>
     {
         public delegate void GameManagerStateChange();

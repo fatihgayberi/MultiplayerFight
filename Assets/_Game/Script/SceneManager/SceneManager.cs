@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WonnasmithTools;
@@ -26,6 +27,34 @@ namespace Wonnasmith
 
 
         private string _currentSceneName = null;
+
+
+        private void OnEnable()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnsceneLoaded;
+        }
+        private void OnDisable()
+        {
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnsceneLoaded;
+        }
+
+
+        private void OnsceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            if (_sceneDictionary == null)
+            {
+                return;
+            }
+
+            foreach (KeyValuePair<ScneType, string> _sceneDictionaryValue in _sceneDictionary)
+            {
+                if (_sceneDictionaryValue.Value == arg0.name)
+                {
+                    LoadedSceneManager?.Invoke(_sceneDictionaryValue.Key);
+                }
+            }
+        }
+
 
         /// <summary> sahneyi yükler </summary>
         /// <returns></returns>
@@ -59,7 +88,6 @@ namespace Wonnasmith
 
             // GameManager.Instance.SetState(GameState.GAME_SCENE_LOAD);
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
-            LoadedSceneManager?.Invoke(scneType);
         }
 
 
@@ -96,7 +124,6 @@ namespace Wonnasmith
             Debug.Log("<color=green>:::LoadSceneAsync:::</color>" + sceneName + "<color=green>:::</color>");
 
             // GameManager.Instance.SetState(GameState.GAME_SCENE_LOAD);
-            LoadedSceneManager?.Invoke(scneType);
             return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
         }
 

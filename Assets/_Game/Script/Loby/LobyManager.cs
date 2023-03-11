@@ -64,7 +64,13 @@ namespace Wonnasmith
 
         private void OnLoadedSceneManager(SceneManager.ScneType scneType)
         {
-
+            if (scneType == SceneManager.ScneType.GameScene)
+            {
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    GameManager.Instance.SetState(GameState.Game_MATCH_WAIT);
+                }
+            }
         }
 
 

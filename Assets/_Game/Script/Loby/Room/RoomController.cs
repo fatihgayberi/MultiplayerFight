@@ -17,6 +17,26 @@ namespace Wonnasmith
         public static event RoomControllerRoomLeft RoomLeft;
 
 
+        public override void OnEnable()
+        {
+            base.OnEnable();
+
+            GameManager.TourPrepare += OnTourPrepare;
+        }
+        public override void OnDisable()
+        {
+            base.OnDisable();
+
+            GameManager.TourPrepare -= OnTourPrepare;
+        }
+
+
+        private void OnTourPrepare()
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+        }
+
+
         [PunRPC]
         public void MasterClientLeft()
         {

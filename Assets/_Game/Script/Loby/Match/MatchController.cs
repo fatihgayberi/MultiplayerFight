@@ -6,6 +6,14 @@ namespace Wonnasmith
 {
     public class MatchController : MonoBehaviour
     {
+        public delegate void MatchControllerCharacterCountChange(int newCharacterCount);
+
+        public delegate void MatchControllerTimeDownChange(float currentTimeDown);
+        public static event MatchControllerTimeDownChange TimeDownChange;
+
+        public delegate void MatchControllerMatchFinih();
+        public static event MatchControllerMatchFinih MatchFinish;
+
         [SerializeField] private WonnaTimeDatas matchWaitTimeDatas;
 
         private float _currentTime;
@@ -18,11 +26,21 @@ namespace Wonnasmith
         {
             GameManager.MatchWaiting += OnMatchWaiting;
             GameManager.MatchFound += OnMatchFound;
+
+            CharacterManagers.CharacterCountChange += OnCharacterCountChange;
         }
         private void OnDisable()
         {
             GameManager.MatchWaiting -= OnMatchWaiting;
             GameManager.MatchFound -= OnMatchFound;
+
+            CharacterManagers.CharacterCountChange -= OnCharacterCountChange;
+        }
+
+
+        private void FixedUpdate()
+        {
+            TimeWait();
         }
 
 
@@ -39,15 +57,20 @@ namespace Wonnasmith
         }
 
 
-        private void OnMatchFound()
+        private void OnCharacterCountChange(int newCharacterCount)
         {
-            GameManager.Instance.SetState(GameState.Game_TOUR_START);
+            if (newCharacterCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+            {
+                GameManager.Instance.SetState(GameState.Game_MATCH_FOUND);
+            }
         }
 
 
-        private void FixedUpdate()
+        private void OnMatchFound()
         {
-            TimeWait();
+            _isWaiting = false;
+            
+            GameManager.Instance.SetState(GameState.Game_TOUR_START);
         }
 
 
@@ -65,9 +88,14 @@ namespace Wonnasmith
 
             _currentTime += Time.fixedDeltaTime;
 
+            TimeDownChange?.Invoke(Mathf.Clamp(_targetTime - _currentTime, 0, _targetTime));
+
             if (_currentTime >= _targetTime)
             {
                 _isWaiting = false;
+
+                MatchFinish?.Invoke();
+                GameManager.Instance.SetState(GameState.Game_TOUR_START);
             }
         }
     }
