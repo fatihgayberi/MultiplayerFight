@@ -22,3 +22,24 @@ public class WonnaTransformDatas
         rotation = transform.rotation;
     }
 }
+
+
+[Serializable]
+public class WonnaTimeDatas
+{
+    [Range(0, 59f)] public float minute;
+    [Range(0, 59f)] public float seconds;
+
+
+    public WonnaTimeDatas(float minute, float seconds)
+    {
+        this.minute = minute;
+        this.seconds = seconds;
+    }
+
+    public WonnaTimeDatas()
+    {
+        this.minute = 0;
+        this.seconds = 0;
+    }
+}

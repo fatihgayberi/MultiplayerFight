@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Wonnasmith
@@ -5,9 +6,11 @@ namespace Wonnasmith
     [CreateAssetMenu(fileName = "BallData", menuName = "MultiplayerFight/BallData", order = 0)]
     public class BallData : ScriptableObject
     {
-        [SerializeField] private float minCurve;
-        [SerializeField] private float maxCurve;
-        [SerializeField] private float duration;
-        [SerializeField][Range(0, 100)] private float scalePercentRate;
+        [Tooltip("Topun temel firlatma gucu"), SerializeField] private float power;
+        [Tooltip("Topun verecegi damage degeri"), SerializeField] private float damage;
+
+
+        public float Power { get => power; }
+        public float Damage { get => damage; }
     }
 }

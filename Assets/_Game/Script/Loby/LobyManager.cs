@@ -6,11 +6,16 @@ using System;
 
 namespace Wonnasmith
 {
+    [DefaultExecutionOrder(-1)]
     public class LobyManager : MonoBehaviourPunCallbacks
     {
+        public delegate void LobyManagerBackToLoby();
+
+        public delegate void LobyManagerMasterClientLeft(Room room);
+        public static event LobyManagerMasterClientLeft MasterClientLeft;
+
         private static LobyManager Instance;
 
-        private int _currentRoomMasterID = int.MaxValue;
 
         public override void OnEnable()
         {
@@ -18,7 +23,8 @@ namespace Wonnasmith
 
             SceneManager.LoadedSceneManager += OnLoadedSceneManager;
 
-            UIGameMainPanelController.Back2LobyButtonClick += OnUIGameMainPanelController;
+            UIGameMainPanelController.BackToLoby += OnBackToLoby;
+            RoomController.BackToLoby += OnBackToLoby;
         }
         public override void OnDisable()
         {
@@ -26,22 +32,27 @@ namespace Wonnasmith
 
             SceneManager.LoadedSceneManager -= OnLoadedSceneManager;
 
-            UIGameMainPanelController.Back2LobyButtonClick -= OnUIGameMainPanelController;
+            UIGameMainPanelController.BackToLoby -= OnBackToLoby;
+            RoomController.BackToLoby -= OnBackToLoby;
         }
 
 
         private void Awake()
         {
-            if (Instance != null)
+            if (Instance != null & Instance != this)
             {
+                Debug.Log("Destroy::", gameObject);
+
                 Destroy(gameObject);
                 return;
             }
+
 
             Instance = this;
             transform.parent = null;
             DontDestroyOnLoad(gameObject);
         }
+
 
         private void Start()
         {
@@ -50,34 +61,32 @@ namespace Wonnasmith
             PhotonNetwork.ConnectUsingSettings();
         }
 
+
         private void OnLoadedSceneManager(SceneManager.ScneType scneType)
         {
-            if (scneType == SceneManager.ScneType.LobyScene)
-            {
-                Debug.Log("OnLoadedSceneManager:::" + scneType, gameObject);
 
-                // PhotonNetwork.JoinLobby();
-            }
         }
 
-        private void OnUIGameMainPanelController()
+
+        private void OnBackToLoby()
         {
-            Debug.Log("OnUIGameMainPanelController");
-
-            if (PhotonNetwork.LocalPlayer.ActorNumber == PhotonNetwork.CurrentRoom.masterClientId)
+            if (PhotonNetwork.IsMasterClient)
             {
-                PhotonNetwork.CurrentRoom.IsOpen = false;
+                Debug.Log("IsMasterClient::LEFT:::YESSSSSSSSSSS", gameObject);
 
-                Debug.Log("CurrentRoom.IsOpen1111111" + PhotonNetwork.CurrentRoom.IsOpen);
+                Room room = PhotonNetwork.CurrentRoom;
+
+                photonView.RPC("MasterClientLeft", RpcTarget.Others);//, room);
+
+                PhotonNetwork.CurrentRoom.IsOpen = false;
             }
 
-            PhotonNetwork.LeaveRoom();
+            if (PhotonNetwork.CurrentRoom != null)
+            {
+                PhotonNetwork.LeaveRoom();
 
-            Debug.Log("CurrentRoom.IsOpen2222222" + PhotonNetwork.CurrentRoom.IsOpen);
-
-            SceneManager.Instance.SceneLoader(SceneManager.ScneType.LobyScene);
-
-            Debug.Log("CurrentRoom.IsOpen3333333" + PhotonNetwork.CurrentRoom.IsOpen);
+                SceneManager.Instance.SceneLoader(SceneManager.ScneType.LobyScene);
+            }
         }
 
 
@@ -92,8 +101,6 @@ namespace Wonnasmith
         public override void OnJoinedRoom()
         {
             Debug.Log("OnJoinedRoom");
-
-            _currentRoomMasterID = PhotonNetwork.LocalPlayer.ActorNumber;
 
             SceneManager.Instance.SceneLoader(SceneManager.ScneType.GameScene);
         }

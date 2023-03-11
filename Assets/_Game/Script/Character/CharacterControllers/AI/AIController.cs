@@ -14,13 +14,7 @@ namespace Wonnasmith
         }
 
 
-        public override void Attack()
-        {
-
-        }
-
-
-        public override void Damage()
+        public override void Damage(float damageValue)
         {
 
         }

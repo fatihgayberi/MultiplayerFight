@@ -2,18 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Wonnasmith
 {
-    public class ThrowInputController : MonoBehaviour
+    public class ArrowController : MonoBehaviour
     {
-        public delegate void ThrowInputControllerThrowInputListener(float throwPower, float throwAngle, float horizontalInput, float verticalInput);
-        public static event /*ThrowInputController.*/ ThrowInputControllerThrowInputListener ThrowInputListener;
-
-        [SerializeField] private SpriteRenderer arrowSpriteRenderer;
+        [SerializeField] private Image arrowImage;
         [SerializeField] private Transform arrowTR;
 
-        [SerializeField] private float minScale;
         [SerializeField] private float maxScale;
 
         [SerializeField] private Color startColor;
@@ -21,8 +18,6 @@ namespace Wonnasmith
 
         private float _throwPower;
         private float _throwAngle;
-        private float _horizontalInput;
-        private float _verticalInput;
 
         private void OnEnable()
         {
@@ -38,27 +33,23 @@ namespace Wonnasmith
         }
 
 
-        private void OnInputStart()
+        private void OnInputStart(Vector2 firstPos)
         {
             _throwAngle = 0;
             _throwPower = 0;
-            _horizontalInput = 0;
-            _verticalInput = 0;
 
+            ArrrowPosChange(firstPos);
             ArrrowColorChange();
             ArrrowRotationChange();
             ArrrowScaleChange();
-            ArrrowSpriteActivator(true);
+            ArrrowImageActivator(true);
         }
 
 
         private void OnInputChange(float horizontalInput, float verticalInput)
         {
-            _horizontalInput = horizontalInput;
-            _verticalInput = verticalInput;
-
-            _throwAngle = (180 / Mathf.PI) * Mathf.Atan2(_verticalInput, _horizontalInput);
-            _throwPower = Mathf.Clamp01(MathF.Abs(_horizontalInput) + MathF.Abs(_verticalInput));
+            _throwAngle = (180 / Mathf.PI) * Mathf.Atan2(verticalInput, horizontalInput);
+            _throwPower = Mathf.Clamp01(MathF.Abs(horizontalInput) + MathF.Abs(verticalInput));
 
             ArrrowColorChange();
             ArrrowRotationChange();
@@ -66,11 +57,20 @@ namespace Wonnasmith
         }
 
 
-        private void OnInputFinish()
+        private void OnInputFinish(float horizontalInput, float verticalInput)
         {
-            ArrrowSpriteActivator(false);
+            ArrrowImageActivator(false);
+        }
 
-            ThrowInputListener?.Invoke(_throwPower, _throwAngle, _horizontalInput, _verticalInput);
+
+        private void ArrrowPosChange(Vector3 pos)
+        {
+            if (arrowTR == null)
+            {
+                return;
+            }
+
+            arrowTR.position = pos;
         }
 
 
@@ -81,7 +81,7 @@ namespace Wonnasmith
                 return;
             }
 
-            arrowTR.localScale = new Vector3(_throwPower.FloatRemap(0, 1, minScale, maxScale), 1, 1);
+            arrowTR.localScale = new Vector3(_throwPower.FloatRemap(0, 1, 0, maxScale), 1, 1);
         }
 
 
@@ -98,23 +98,23 @@ namespace Wonnasmith
 
         private void ArrrowColorChange()
         {
-            if (arrowSpriteRenderer == null)
+            if (arrowImage == null)
             {
                 return;
             }
 
-            arrowSpriteRenderer.color = (_throwPower * 100).ColorPercentRate(startColor, endColor);
+            arrowImage.color = (_throwPower * 100).ColorPercentRate(startColor, endColor);
         }
 
 
-        private void ArrrowSpriteActivator(bool isEnable)
+        private void ArrrowImageActivator(bool isEnable)
         {
-            if (arrowSpriteRenderer == null)
+            if (arrowImage == null)
             {
                 return;
             }
 
-            arrowSpriteRenderer.enabled = isEnable;
+            arrowImage.enabled = isEnable;
         }
     }
 }

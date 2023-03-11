@@ -2,6 +2,8 @@ namespace Wonnasmith
 {
     interface IDamageable
     {
-        void Damage();
+        void Damage(float damageValue);
+
+        void Dead();
     }
 }

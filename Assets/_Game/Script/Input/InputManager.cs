@@ -8,21 +8,24 @@ namespace Wonnasmith
     {
         public delegate void InputManagerInputChange(float horizontalInput, float verticalInput);
         public static event /*InputManager.*/ InputManagerInputChange InputChange;
+        public static event /*InputManager.*/ InputManagerInputChange InputFinish;
 
-        public delegate void InputManagerInputAction();
+        public delegate void InputManagerInputAction(Vector2 firstPos);
         public static event /*InputManager.*/ InputManagerInputAction InputStart;
-        public static event /*InputManager.*/ InputManagerInputAction InputFinish;
 
 
         [SerializeField, Range(0f, 100f)] float joystickRange;
 
         private float _width;
         private float _height;
-
         private float pixelDistance;
+        private float _horizontalInput;
+        private float _verticalInput;
 
         private Vector3 _firstPos;
         private Vector3 _endPos;
+        private Vector3 _posDist;
+
 
         private void Start()
         {
@@ -49,11 +52,16 @@ namespace Wonnasmith
                 return;
             }
 
+            if (!TourController.Instance.IsMyTurn)
+            {
+                return;
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
-                InputStart?.Invoke();
-
                 _firstPos = Input.mousePosition;
+
+                InputStart?.Invoke(_firstPos);
             }
 
             if (Input.GetMouseButton(0))
@@ -61,26 +69,25 @@ namespace Wonnasmith
                 _endPos = Input.mousePosition;
 
                 Touching();
+                InputChange?.Invoke(_horizontalInput, _verticalInput);
             }
 
             if (Input.GetMouseButtonUp(0))
             {
-                InputFinish?.Invoke();
+                Touching();
+                InputFinish?.Invoke(_horizontalInput, _verticalInput);
+                Debug.Log("GetMouseButtonUp:::", gameObject);
             }
         }
 
 
         private void Touching()
         {
-            Vector3 posDist = _endPos - _firstPos;
+            _posDist = _endPos - _firstPos;
 
-            float horizontalInput = posDist.x.FloatRemap(-pixelDistance, pixelDistance, -1, 1);
-            // horizontalInput = Mathf.Clamp(horizontalInput, -1, 1);
+            _horizontalInput = _posDist.x.FloatRemap(-pixelDistance, pixelDistance, -1, 1);
 
-            float verticalInput = posDist.y.FloatRemap(-pixelDistance, pixelDistance, -1, 1);
-            // verticalInput = Mathf.Clamp(verticalInput, -1, 1);
-
-            InputChange?.Invoke(horizontalInput, verticalInput);
+            _verticalInput = _posDist.y.FloatRemap(-pixelDistance, pixelDistance, -1, 1);
         }
     }
 }

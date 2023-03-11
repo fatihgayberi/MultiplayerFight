@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WonnasmithTools;
@@ -11,205 +12,132 @@ namespace Wonnasmith
     {
         NONE,
 
-        GAME_SCENE_LOAD,
-        GAME_LEVEL_LOAD,
         GAME_START,
-        GAME_IS_PLAY,
-        GAME_IS_WIN,
-        GAME_IS_LOSE,
-        GAME_PAUSED,
-        GAME_RESUME,
+        Game_MATCH_WAIT,
+        Game_MATCH_FOUND,
+        Game_TOUR_START,
+        GAME_PLAY,
+        GAME_WIN,
+        GAME_LOSE,
         GAME_FINISHED,
-        GAME_DATA_SAVE,
         GAME_QUIT
     }
 
     [DefaultExecutionOrder(-1)]
     public class GameManager : Singleton<GameManager>
     {
-        public delegate void GameManagerLevelClear();
-        public delegate void GameManagerDataLoad();
-        public delegate void GameManagerLevelLoad();
-        public delegate void GameManagerLevelPrepare();
-        public delegate void GameManagerPreparePrepareNewSceneLoad();
-        public delegate void GameManagerLevelWin();
-        public delegate void GameManagerLevelLose();
-        public delegate void GameManagerLevelFinish(bool isWin);
-        public delegate void GameManagerGameDataSave();
-        public delegate void GameManagerGamePause();
-        public delegate void GameManagerGameResume();
+        public delegate void GameManagerStateChange();
 
-        /// <summary> Önceki levelden kalma ne varsa temizlenir </summary>
-        public static event /*GameManager.*/GameManagerLevelClear LevelClear;
 
         /// <summary> Dataların yüklenmesini sağlar </summary>
-        public static event /*GameManager.*/GameManagerDataLoad DataLoad;
+        public static event /*GameManager.*/GameManagerStateChange DataLoad;
 
         /// <summary> leveli hazırlar </summary>
-        public static event /*GameManager.*/GameManagerLevelLoad LevelLoad;
-
-        /// <summary> Yeni levele hazırlık yapılır </summary>
-        public static event /*GameManager.*/GameManagerLevelPrepare LevelPrepare;
+        public static event /*GameManager.*/GameManagerStateChange LevelLoad;
 
         /// <summary> Yeni sahnenin yüklenmeye başladığını haber salar </summary>
-        public static event /*GameManager.*/GameManagerPreparePrepareNewSceneLoad PrepareNewSceneLoad;
+        public static event /*GameManager.*/GameManagerStateChange GameStart;
 
         /// <summary> Yeni sahnenin yüklenmeye başladığını haber salar </summary>
-        public static event /*GameManager.*/GameManagerLevelWin LevelWin;
+        public static event /*GameManager.*/GameManagerStateChange LevelWin;
 
         /// <summary> Yeni sahnenin yüklenmeye başladığını haber salar </summary>
-        public static event /*GameManager.*/GameManagerLevelLose LevelLose;
+        public static event /*GameManager.*/GameManagerStateChange LevelLose;
 
         /// <summary> Yeni sahnenin yüklenmeye başladığını haber salar </summary>
-        public static event /*GameManager.*/GameManagerLevelFinish LevelFinish;
+        public static event /*GameManager.*/GameManagerStateChange LevelFinish;
 
-        /// <summary> Oyunun datalarının kaydedildiğini bildirir </summary>
-        public static event /*GameManager.*/GameManagerGameDataSave GameDataSave;
+        /// <summary> Oyunda eşleşme aranmaya başladığını bildirir </summary>
+        public static event /*GameManager.*/GameManagerStateChange MatchWaiting;
 
-        /// <summary> Oyunun pause geçtiğini haber salar </summary>
-        public static event /*GameManager.*/GameManagerGamePause GamePause;
+        /// <summary> Oyunda eşleşme bulunduğunu bildirir </summary>
+        public static event /*GameManager.*/GameManagerStateChange MatchFound;
 
-        /// <summary> Oyunun pause geçtiğini haber salar </summary>
-        public static event /*GameManager.*/GameManagerGameResume GameResume;
+        /// <summary> Yeni tur başlaması için hazırlıklar yapılır </summary>
+        public static event /*GameManager.*/GameManagerStateChange TourPrepare;
+
+        /// <summary> Oyunda tur başladığını bildirir </summary>
+        public static event /*GameManager.*/GameManagerStateChange TourStart;
 
         private GameState _currentGameState = GameState.NONE;
         private GameState _prevGameState = GameState.NONE;
 
         private void Start()
         {
-            SetState(GameState.GAME_SCENE_LOAD);
+            SetState(GameState.GAME_START);
         }
 
         private void OnEnable()
         {
-            LevelClear += OnLevelClear;
             DataLoad += OnDataLoad;
             LevelLoad += OnLevelLoad;
-            LevelPrepare += OnLevelPrepare;
-            PrepareNewSceneLoad += OnPrepareNewSceneLoad;
+            TourPrepare += OnTourPrepare;
+            TourStart += OnTourStart;
         }
 
         private void OnDisable()
         {
-            LevelClear -= OnLevelClear;
             DataLoad -= OnDataLoad;
             LevelLoad -= OnLevelLoad;
-            LevelPrepare -= OnLevelPrepare;
-            PrepareNewSceneLoad -= OnPrepareNewSceneLoad;
+            TourPrepare -= OnTourPrepare;
+            TourStart -= OnTourStart;
         }
-
 
 
         public void SetState(GameState newGameState)
         {
-            Debug.Log("G-A-M-E_S-T-A-T-E: ==> " + newGameState);
+            Debug.Log("G-A-M-E_S-T-A-T-E: ==> " + newGameState, gameObject);
 
             _prevGameState = _currentGameState;
             _currentGameState = newGameState;
 
-            if (newGameState.Equals(GameState.GAME_LEVEL_LOAD))
+            if (newGameState.Equals(GameState.GAME_START))
             {
-                SetState(/*GameManager.*/GameState.GAME_START);
-                LevelClear?.Invoke();
+                GameStart?.Invoke();
                 DataLoad?.Invoke();
-                LevelLoad?.Invoke();
-                LevelPrepare?.Invoke();
             }
-            else if (newGameState.Equals(GameState.GAME_SCENE_LOAD))
+            else if (newGameState.Equals(GameState.Game_MATCH_WAIT))
             {
-                PrepareNewSceneLoad?.Invoke();
+                MatchWaiting?.Invoke();
             }
-            else if (newGameState.Equals(GameState.GAME_IS_WIN))
+            else if (newGameState.Equals(GameState.Game_MATCH_FOUND))
+            {
+                MatchFound?.Invoke();
+            }
+            else if (newGameState.Equals(GameState.Game_TOUR_START))
+            {
+                TourPrepare?.Invoke();
+                TourStart?.Invoke();
+                SetState(GameState.GAME_PLAY);
+            }
+            else if (newGameState.Equals(GameState.GAME_WIN))
             {
                 LevelWin?.Invoke();
-                LevelFinish?.Invoke(true);
-                SetState(/*GameManager.*/GameState.GAME_FINISHED);
+                SetState(GameState.GAME_FINISHED);
             }
-            else if (newGameState.Equals(GameState.GAME_IS_LOSE))
+            else if (newGameState.Equals(GameState.GAME_LOSE))
             {
                 LevelLose?.Invoke();
-                LevelFinish?.Invoke(false);
-                SetState(/*GameManager.*/GameState.GAME_FINISHED);
+                SetState(GameState.GAME_FINISHED);
             }
-            else if (newGameState.Equals(GameState.GAME_DATA_SAVE))
+            else if (newGameState.Equals(GameState.GAME_FINISHED))
             {
-                GameDataSave?.Invoke();
-            }
-            else if (newGameState.Equals(GameState.GAME_PAUSED))
-            {
-                Time.timeScale = 0;
-                GamePause?.Invoke();
-            }
-            else if (newGameState.Equals(GameState.GAME_RESUME))
-            {
-                Time.timeScale = 1;
-                GameResume?.Invoke();
-
-                SetState(/*GameManager.*/GameState.GAME_IS_PLAY);
+                LevelFinish?.Invoke();
             }
         }
-
-
-        public bool GameIsStart()
-        {
-            if (_currentGameState.Equals(GameState.GAME_START)) { return true; }
-            else { return false; }
-        }
-
 
 
         public bool GameIsPlaying()
         {
-            if (_currentGameState.Equals(GameState.GAME_IS_PLAY)) { return true; }
+            if (_currentGameState.Equals(GameState.GAME_PLAY)) { return true; }
             else { return false; }
         }
 
-
-
-        public bool GameIsPause()
-        {
-            if (_currentGameState.Equals(GameState.GAME_PAUSED)) { return true; }
-            else { return false; }
-        }
-
-
-
-        public bool GameIsResume()
-        {
-            if (_currentGameState.Equals(GameState.GAME_RESUME)) { return true; }
-            else { return false; }
-        }
-
-
-
-        public bool GameIsSceneLoad()
-        {
-            if (_currentGameState.Equals(GameState.GAME_SCENE_LOAD)) { return true; }
-            else { return false; }
-        }
-
-
-
-        public bool GameIsFinish()
-        {
-            if (_currentGameState.Equals(GameState.GAME_FINISHED)) { return true; }
-            else { return false; }
-        }
-
-
-
+        
         private void OnDataLoad()
         {
             Debug.Log("<color=grey>:::DataLoad:::</color>");
         }
-
-
-
-        private void OnLevelClear()
-        {
-            Debug.Log("<color=red>:::LevelClear:::</color>");
-        }
-
 
 
         private void OnLevelLoad()
@@ -218,30 +146,15 @@ namespace Wonnasmith
         }
 
 
-
-        private void OnLevelPrepare()
+        private void OnTourPrepare()
         {
-            Debug.Log("<color=green>:::OnLevelPrepare:::</color>");
-
-            /*GameManager.Instance.*/
-            SetState(/*GameManager.*/GameState.GAME_IS_PLAY);
+            Debug.Log("<color=green>:::OnTourPrepare:::</color>");
         }
 
 
-
-        private void OnPrepareNewSceneLoad()
+        private void OnTourStart()
         {
-            Debug.Log("<color=cyan>:::OnPrepareNewSceneLoad:::</color>");
-            SetState(/*GameManager.*/GameState.GAME_LEVEL_LOAD);
-        }
-
-
-
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            Debug.Log("<color=orange>:::OnSceneLoaded:::</color>" + scene.name + "<color=orange>:::</color>");
-            /*GameManager.Instance.*/
-            SetState(/*GameManager.*/GameState.GAME_SCENE_LOAD);
+            Debug.Log("<color=green>:::OnTourStart:::</color>");
         }
     }
 }

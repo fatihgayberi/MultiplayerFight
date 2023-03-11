@@ -55,9 +55,9 @@ namespace Wonnasmith
                 return;
             }
 
-            Debug.Log("<color=pink>:::LoadScene:::</color>" + sceneName + "<color=pink>:::</color>");
+            Debug.Log("<color=green>:::LoadScene:::</color>" + sceneName + "<color=green>:::</color>");
 
-            GameManager.Instance.SetState(GameState.GAME_SCENE_LOAD);
+            // GameManager.Instance.SetState(GameState.GAME_SCENE_LOAD);
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
             LoadedSceneManager?.Invoke(scneType);
         }
@@ -93,9 +93,9 @@ namespace Wonnasmith
                 return null;
             }
 
-            Debug.Log("<color=pink>:::LoadSceneAsync:::</color>" + sceneName + "<color=pink>:::</color>");
+            Debug.Log("<color=green>:::LoadSceneAsync:::</color>" + sceneName + "<color=green>:::</color>");
 
-            GameManager.Instance.SetState(GameState.GAME_SCENE_LOAD);
+            // GameManager.Instance.SetState(GameState.GAME_SCENE_LOAD);
             LoadedSceneManager?.Invoke(scneType);
             return UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName);
         }

@@ -10,17 +10,18 @@ namespace Wonnasmith
 
         [SerializeField] private TMPro.TMP_InputField playerNameInputField;
 
+
         private void OnEnable()
         {
-            GameManager.LevelPrepare += OnLevelPrepare;
+            GameManager.TourPrepare += OnTourPrepare;
         }
         private void OnDisable()
         {
-            GameManager.LevelPrepare -= OnLevelPrepare;
+            GameManager.TourPrepare -= OnTourPrepare;
         }
 
 
-        private void OnLevelPrepare()
+        private void OnTourPrepare()
         {
             if (playerNameInputField != null)
             {

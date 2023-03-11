@@ -5,8 +5,6 @@ namespace Wonnasmith
 {
     public class PlayerController : CharacterBase
     {
-        [SerializeField] private BallClassicController ballClassicController;
-
         protected override void OnEnable()
         {
             base.OnEnable();
@@ -16,15 +14,19 @@ namespace Wonnasmith
             base.OnDisable();
         }
 
-
-        public override void Attack()
+        public override void Damage(float damageValue)
         {
+            if (!_isLive)
+            {
+                return;
+            }
 
-        }
+            base.Damage(damageValue);
 
-        public override void Damage()
-        {
-
+            if (_currentHealth <= 0)
+            {
+                base.Dead();
+            }
         }
     }
 }

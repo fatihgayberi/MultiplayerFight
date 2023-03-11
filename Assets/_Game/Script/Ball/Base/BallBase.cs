@@ -1,200 +1,90 @@
+using System;
+using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using UnityEngine;
 
 namespace Wonnasmith
 {
-    public abstract class BallBase : MonoBehaviour, IThrowable
+    public abstract class BallBase : MonoBehaviour
     {
+        [SerializeField] private BallData ballData;
+
+        [SerializeField] private Rigidbody2D ballRigidbody2D;
+        [SerializeField] private PhotonView ballPhotonView;
+
+
         public abstract void ThrowStarted();
         public abstract void ThrowFinished();
 
-        [Space(), Space()]
-        [WonnasmithEditor.HelpBox("Bu mermi hiz kullanmiyor, onun yerine duration kullaniyor.", WonnasmithEditor.HelpBoxMessageType.Info)]
-        [Space(), Space()]
 
-        [SerializeField] private float minCurve;
-        [SerializeField] private float maxCurve;
-        [SerializeField] private float duration;
-        [SerializeField][Range(0, 1)] private float scalePercentRate;
-
-
-
-        private float _angle;
-        private float _speedY;
-        private float _speedX;
-        private float _curve;
-        private float _distanceX;
-        private float _distanceY;
-        private float _tempDuration;
-        private float _tempScaleRate;
-        private float _posConstValue_1;
-        private float _posConstValue_2;
-
-        private int _horizontalDirection = 1;
-        private int _verticalDirection = 1;
-
-        private Vector3 _newPos = Vector3.zero;
-        private Vector3 _firstPos = Vector3.zero;
-        private Vector3 _calculatePos = Vector3.zero;
-
-        private bool _isThrow;
-        private bool _isVerticalThrow;
-
-        public Transform targetTR;
-        public bool isTest;
-
-
-        private void Update()
+        public void Throw(float horizontalInput, float verticalInput)
         {
-            if (isTest)
+            if (ballData == null)
             {
-                isTest = false;
-
-                // ThrowInitialize(targetTR.position);
+                return;
             }
+
+            if (ballRigidbody2D == null)
+            {
+                return;
+            }
+
+            ThrowStarted();
+
+            ballRigidbody2D.simulated = true;
+
+            ballRigidbody2D.velocity = new Vector2(-horizontalInput, -verticalInput) * ballData.Power;
         }
 
 
-        public void ThrowStart(float throwPower, float throwAngle, float horizontalInput, float verticalInput)
+        public void BallSetActive(bool isActive)
         {
-            ThrowInitialize();
+            if (ballPhotonView == null)
+            {
+                return;
+            }
+
+            ballPhotonView.RPC("RPC_BallSetActive", RpcTarget.All, isActive);
         }
 
 
-        private void ThrowInitialize(float angle, float distanceHorizantal, Vector3 targetPos)
+        [PunRPC]
+        protected virtual void RPC_BallSetActive(bool isActive)
         {
-            _isThrow = true;
-
-            _firstPos = transform.position;
-
-            _distanceX = Mathf.Abs(targetPos.x - transform.position.x);
-            _distanceY = Mathf.Abs(targetPos.y - transform.position.y);
-
-            _isVerticalThrow = _distanceY > _distanceX ? true : false;
-
-            _horizontalDirection = 1;
-            _verticalDirection = 1;
-
-            if (targetPos.x < transform.position.x)
-            {
-                // yatay konumda hedef noktasi negatif tarafta kaliyor
-
-                _horizontalDirection = -1;
-            }
-
-            if (targetPos.y < transform.position.y)
-            {
-                // dikey konumda hedef noktasi negatif tarafta kaliyor
-
-                _verticalDirection = -1;
-            }
-
-            _curve = UnityEngine.Random.Range(minCurve, maxCurve);
-
-            if (_isVerticalThrow)
-            {
-                // dikey yonde bir atis yapiliyor
-
-                _speedY = (_distanceY / duration);
-
-                _angle = Mathf.Atan2(_curve, _distanceY);
-
-                _speedX = Mathf.Abs(_speedY * Mathf.Tan(_angle));
-
-                _posConstValue_1 = ((-2 * Mathf.Abs(Mathf.Tan(_angle))) / _distanceY);
-                _posConstValue_2 = _speedX * (duration / 2);
-            }
-            else
-            {
-                // yatay yonde bir atis yapiliyor
-
-                _speedX = (_distanceX / duration);
-
-                _angle = Mathf.Atan2(_curve, _distanceX);
-
-                _speedY = Mathf.Abs(_speedX * Mathf.Tan(_angle));
-
-                _posConstValue_1 = ((-2 * Mathf.Abs(Mathf.Tan(_angle))) / _distanceX);
-                _posConstValue_2 = _speedY * (duration / 2);
-            }
-
-            _tempDuration = 0;
+            gameObject.SetActive(isActive);
         }
 
 
-        private void Throw()
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!_isThrow)
+            if (!GameManager.Instance.GameIsPlaying())
             {
-
                 return;
             }
 
 
-            if (_isVerticalThrow)
+            if (other == null)
             {
-                _newPos.y = GetPositionY();
-                _newPos.x = GetPositionX(_newPos.y);
-            }
-            else
-            {
-                _newPos.x = GetPositionX();
-                _newPos.y = GetPositionY(_newPos.x);
+                return;
             }
 
 
-            if (_tempDuration <= duration / 2)
+            if (LayerManager.Instance.IsLayerEquals(other.gameObject.layer, LayerManager.LayerType.Character_LAYER))
             {
-                // yukari çikiyor
+                if (ballData == null)
+                {
+                    return;
+                }
 
-                _tempScaleRate = _tempDuration.FloatRemap(0, duration / 2, 1, scalePercentRate);
-            }
-            else
-            {
-                // aşagi düşüyor
+                IDamageable iDamageable = other.GetComponent<IDamageable>();
 
-                _tempScaleRate = _tempDuration.FloatRemap(duration / 2, duration, scalePercentRate, 1);
-            }
+                if (iDamageable != null)
+                {
+                    Debug.Log("other:::", other.gameObject);
 
-            _calculatePos.x = _firstPos.x + (_newPos.x * _horizontalDirection);
-            _calculatePos.y = _firstPos.y + (_newPos.y * _verticalDirection);
-
-            transform.position = _calculatePos;
-            transform.localScale = Vector3.one * _tempScaleRate;
-
-            _tempDuration += Time.fixedDeltaTime;
-
-            if (_tempDuration > duration)
-            {
-                // hedefe ulasildi
-                _isThrow = false;
+                    iDamageable.Damage(ballData.Damage);
+                }
             }
         }
-
-
-        private void FixedUpdate()
-        {
-            Throw();
-        }
-
-
-        private float GetPositionX(float posY)
-        {
-            return _posConstValue_1 * (posY - _distanceY / 2) * (posY - _distanceY / 2) + _posConstValue_2 + ((_distanceX * _tempDuration) / duration);
-        }
-        private float GetPositionX()
-        {
-            return _speedX * _tempDuration;
-        }
-
-
-        private float GetPositionY(float posX)
-        {
-            return _posConstValue_1 * (posX - _distanceX / 2) * (posX - _distanceX / 2) + _posConstValue_2 + ((_distanceY * _tempDuration) / duration);
-        }
-        private float GetPositionY()
-        {
-            return _speedY * _tempDuration;
-        }
-
     }
 }

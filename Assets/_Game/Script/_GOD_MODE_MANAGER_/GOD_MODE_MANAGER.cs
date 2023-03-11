@@ -69,7 +69,6 @@ namespace Wonnasmith
                 return;
             }
 
-            Test_Pause();
             Test_Win();
             Test_Lose();
             Test_ConsoleClear();
@@ -85,7 +84,7 @@ namespace Wonnasmith
             if (Input.GetKeyDown(god_Mode_Buttons.win_Button))
             {
                 Debug.Log("<color=green>:::WONNASMITH_IS_HERE <<[]>> GOD_MODE_TestWin:::</color>");
-                GameManager.Instance.SetState(GameState.GAME_IS_WIN);
+                GameManager.Instance.SetState(GameState.GAME_WIN);
             }
         }
 
@@ -98,29 +97,7 @@ namespace Wonnasmith
             if (Input.GetKeyDown(god_Mode_Buttons.lose_Button))
             {
                 Debug.Log("<color=red>:::WONNASMITH_IS_HERE <<[]>> GOD_MODE_TestLose:::</color>");
-                GameManager.Instance.SetState(GameState.GAME_IS_LOSE);
-            }
-        }
-
-
-        /// <summary>
-        /// oyunu pause-resume yapar
-        /// </summary>
-        private void Test_Pause()
-        {
-            if (Input.GetKeyDown(god_Mode_Buttons.pause_Button))
-            {
-                if (GameManager.Instance.GameIsPause())
-                {
-                    GameManager.Instance.SetState(GameState.GAME_RESUME);
-
-                    Debug.Log("<color=green>:::WONNASMITH_IS_HERE <<[]>> GOD_MODE_TestResume:::</color>");
-                }
-                else
-                {
-                    GameManager.Instance.SetState(GameState.GAME_PAUSED);
-                    Debug.Log("<color=red>:::WONNASMITH_IS_HERE <<[]>> GOD_MODE_TestPause:::</color>");
-                }
+                GameManager.Instance.SetState(GameState.GAME_LOSE);
             }
         }
 

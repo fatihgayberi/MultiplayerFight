@@ -40,6 +40,23 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - Throw
+  - CharacterGenerate
+  - MasterClientLeft
+  - CharacterGenerated
+  - PunRPCCharacterGenerated
+  - PunRPCCharacterGenerate
+  - PunRPC_CharacterGenerate
+  - PunRPC_CharacterGenerated
+  - PunRPC_SetState
+  - BallPoolInitialize
+  - RPC_BallSetActive
+  - PunRPC_Throw
+  - PunRPC_TurnChange
+  - PunRPC_SliderChangeValueWithTime
+  - Damage
+  - PunRPC_Damage
+  - PunRPC_Dead
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
