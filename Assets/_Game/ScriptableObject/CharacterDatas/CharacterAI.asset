@@ -13,3 +13,15 @@ MonoBehaviour:
   m_Name: CharacterAI
   m_EditorClassIdentifier: 
   maxHealth: 100
+  rangeDuration:
+    min: 1
+    max: 2.3
+  rangeCurve:
+    min: 5
+    max: 40
+  rangeThrowPosX:
+    min: 5
+    max: 25
+  rangeThrowPosY:
+    min: 1
+    max: 4

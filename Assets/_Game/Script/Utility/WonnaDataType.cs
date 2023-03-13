@@ -25,6 +25,14 @@ public class WonnaTransformDatas
 
 
 [Serializable]
+public class WonnRangeDatas
+{
+    public float min = 0;
+    public float max = 0;
+}
+
+
+[Serializable]
 public class WonnaTimeDatas
 {
     [Range(0, 59f)] public float minute;

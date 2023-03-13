@@ -1,10 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using Photon.Pun;
 using Photon.Realtime;
-using WonnasmithTools;
 
 namespace Wonnasmith
 {
@@ -41,6 +38,7 @@ namespace Wonnasmith
         }
 
 
+        // dönüp düzeltilecek karmakarışık
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             base.OnRoomListUpdate(roomList);
@@ -51,7 +49,7 @@ namespace Wonnasmith
 
             foreach (RoomInfo newRoomInfo in roomList)
             {
-                Debug.Log("newRoomInfo::: ISOPEN" + newRoomInfo.IsOpen);
+                Debug.Log("newRoomInfo::: ISOPEN" + newRoomInfo.IsVisible);
 
                 if (newRoomInfo.MaxPlayers == 0)
                 {
@@ -84,8 +82,26 @@ namespace Wonnasmith
                         }
                     }
                 }
+
+                if (newRoomInfo.RemovedFromList)
+                {
+                    foreach (KeyValuePair<RoomInfo, RoomElementController> room in _activeRoomDictionary)
+                    {
+                        if (string.Equals(room.Key.Name, newRoomInfo.Name))
+                        {
+                            room.Value.SetIsAvailableRoomElement(true);
+                            room.Value.gameObject.SetActiveNullCheck(false);
+                        }
+                    }
+                }
             }
 
+            RoomElementPropertiesUpdate();
+        }
+
+
+        private void RoomElementPropertiesUpdate()
+        {
             foreach (KeyValuePair<RoomInfo, RoomElementController> room in _activeRoomDictionary)
             {
                 room.Value.SetRoomName(room.Key);
@@ -96,6 +112,16 @@ namespace Wonnasmith
 
         private void OnJoinRoomButtonClick(RoomElementController roomElement)
         {
+            if (!GameManager.Instance.GameInLobby())
+            {
+                return;
+            }
+
+            if (PhotonNetwork.CurrentRoom != null)
+            {
+                return;
+            }
+
             if (roomElement == null)
             {
                 return;
@@ -130,6 +156,16 @@ namespace Wonnasmith
 
         private void OnRoomCreateButtonClick()
         {
+            if (!GameManager.Instance.GameInLobby())
+            {
+                return;
+            }
+
+            if (PhotonNetwork.CurrentRoom != null)
+            {
+                return;
+            }
+
             string roomName = "Room_" + System.Guid.NewGuid().ToString();
 
             if (_roomOption == null)

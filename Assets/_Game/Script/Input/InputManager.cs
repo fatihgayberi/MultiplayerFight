@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 namespace Wonnasmith
@@ -13,12 +14,13 @@ namespace Wonnasmith
         public delegate void InputManagerInputAction(Vector2 firstPos);
         public static event /*InputManager.*/ InputManagerInputAction InputStart;
 
-
         [SerializeField, Range(0f, 100f)] float joystickRange;
+        [SerializeField, Range(0f, 100f)] float joystickDiscardRange;
 
         private float _width;
         private float _height;
-        private float pixelDistance;
+        private float _pixelDistance;
+        private float _pixelDiscardDistance;
         private float _horizontalInput;
         private float _verticalInput;
 
@@ -34,17 +36,24 @@ namespace Wonnasmith
 
             if (_width > _height)
             {
-                pixelDistance = _width * joystickRange / 200;
+                _pixelDistance = _width * joystickRange / 200;
+                _pixelDiscardDistance = _width * joystickDiscardRange / 200;
             }
             else
             {
-                pixelDistance = _height * joystickRange / 200;
+                _pixelDistance = _height * joystickRange / 200;
+                _pixelDiscardDistance = _height * joystickDiscardRange / 200;
             }
         }
 
 
         private void Update()
         {
+            if (!GameManager.Instance.GameIsPlaying())
+            {
+                return;
+            }
+
             if (Input.touchCount > 1)
             {
                 // ekrana fazla barnak atmasın
@@ -52,10 +61,17 @@ namespace Wonnasmith
                 return;
             }
 
-            if (!TourController.Instance.IsMyTurn)
+            if (TourController.Instance.IsTurnOfMasterClient && !PhotonNetwork.IsMasterClient)
             {
                 return;
             }
+
+
+            if (!TourController.Instance.IsTurnOfMasterClient && PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -68,15 +84,21 @@ namespace Wonnasmith
             {
                 _endPos = Input.mousePosition;
 
-                Touching();
-                InputChange?.Invoke(_horizontalInput, _verticalInput);
+                if ((_endPos - _firstPos).magnitude >= _pixelDiscardDistance)
+                {
+                    Touching();
+                    InputChange?.Invoke(_horizontalInput, _verticalInput);
+                }
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 Touching();
-                InputFinish?.Invoke(_horizontalInput, _verticalInput);
-                Debug.Log("GetMouseButtonUp:::", gameObject);
+
+                if ((_endPos - _firstPos).magnitude >= _pixelDiscardDistance)
+                {
+                    InputFinish?.Invoke(_horizontalInput, _verticalInput);
+                }
             }
         }
 
@@ -85,9 +107,9 @@ namespace Wonnasmith
         {
             _posDist = _endPos - _firstPos;
 
-            _horizontalInput = _posDist.x.FloatRemap(-pixelDistance, pixelDistance, -1, 1);
+            _horizontalInput = _posDist.x.FloatRemap(-_pixelDistance, _pixelDistance, -1, 1);
 
-            _verticalInput = _posDist.y.FloatRemap(-pixelDistance, pixelDistance, -1, 1);
+            _verticalInput = _posDist.y.FloatRemap(-_pixelDistance, _pixelDistance, -1, 1);
         }
     }
 }

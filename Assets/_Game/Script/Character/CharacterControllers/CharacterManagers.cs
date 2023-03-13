@@ -15,7 +15,7 @@ namespace Wonnasmith
         [SerializeField] private GameObject aiPrefab;
         [SerializeField] public PhotonView characterManagerPhotonView;
 
-        private CharacterBase _characterBase;
+        private PlayerController _playerController;
 
         private List<int> _allCharacterViewIDList = new List<int>();
 
@@ -26,7 +26,7 @@ namespace Wonnasmith
 
             RoomController.RoomFulled += OnRoomFulled;
 
-            CharacterBase.CharacterGenerated += OnCharacterGenerated;
+            PlayerController.CharacterGenerated += OnCharacterGenerated;
 
             MatchController.MatchFinish += OnMatchFinish;
         }
@@ -36,7 +36,7 @@ namespace Wonnasmith
 
             RoomController.RoomFulled -= OnRoomFulled;
 
-            CharacterBase.CharacterGenerated -= OnCharacterGenerated;
+            PlayerController.CharacterGenerated -= OnCharacterGenerated;
 
             MatchController.MatchFinish -= OnMatchFinish;
         }
@@ -66,6 +66,7 @@ namespace Wonnasmith
 
         private void OnMatchFinish()
         {
+            OnRoomFulled();
             GenerateAI();
         }
 
@@ -81,14 +82,14 @@ namespace Wonnasmith
 
             AIController aiController = generatedAI.GetComponent<AIController>();
 
-            // aiController.Initialize();
+            aiController.AiInitialize();
         }
 
 
         [PunRPC]
         private void PunRPC_CharacterGenerate()
         {
-            if (_characterBase != null)
+            if (_playerController != null)
             {
                 return;
             }
@@ -105,13 +106,13 @@ namespace Wonnasmith
                 return;
             }
 
-            _characterBase = createdCharacter.GetComponent<CharacterBase>();
+            _playerController = createdCharacter.GetComponent<PlayerController>();
 
-            if (_characterBase != null)
+            if (_playerController != null)
             {
                 // _characterBase.CharacterSpriteRendererEnable(false);
 
-                _characterBase.CharacterInitialize();
+                _playerController.CharacterInitialize();
             }
         }
 

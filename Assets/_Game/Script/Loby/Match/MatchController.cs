@@ -61,7 +61,7 @@ namespace Wonnasmith
         {
             if (newCharacterCount == PhotonNetwork.CurrentRoom.MaxPlayers)
             {
-                GameManager.Instance.SetState(GameState.Game_MATCH_FOUND);
+                GameManager.Instance.SetState(GameState.GAME_MATCH_FOUND);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Wonnasmith
         {
             _isWaiting = false;
             
-            GameManager.Instance.SetState(GameState.Game_TOUR_START);
+            GameManager.Instance.SetState(GameState.GAME_TOUR_START);
         }
 
 
@@ -95,7 +95,7 @@ namespace Wonnasmith
                 _isWaiting = false;
 
                 MatchFinish?.Invoke();
-                GameManager.Instance.SetState(GameState.Game_TOUR_START);
+                GameManager.Instance.SetState(GameState.GAME_TOUR_START);
             }
         }
     }

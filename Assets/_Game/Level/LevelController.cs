@@ -8,11 +8,13 @@ namespace Wonnasmith
     {
         private void OnEnable()
         {
-            CharacterBase.CharacterDead += OnCharacterDead;
+            PlayerController.CharacterDead += OnCharacterDead;
+            AIController.CharacterDead += OnCharacterDead;
         }
         private void OnDisable()
         {
-            CharacterBase.CharacterDead -= OnCharacterDead;
+            PlayerController.CharacterDead -= OnCharacterDead;
+            AIController.CharacterDead -= OnCharacterDead;
         }
 
 
@@ -22,22 +24,24 @@ namespace Wonnasmith
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    GameManager.Instance.SetState(GameState.GAME_WIN);
+                    GameManager.Instance.SetState(GameState.GAME_TOUR_LOSE);
                 }
-                else
+
+                if (!PhotonNetwork.IsMasterClient)
                 {
-                    GameManager.Instance.SetState(GameState.GAME_LOSE);
+                    GameManager.Instance.SetState(GameState.GAME_TOUR_WIN);
                 }
             }
             else
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    GameManager.Instance.SetState(GameState.GAME_LOSE);
+                    GameManager.Instance.SetState(GameState.GAME_TOUR_WIN);
                 }
-                else
+
+                if (!PhotonNetwork.IsMasterClient)
                 {
-                    GameManager.Instance.SetState(GameState.GAME_WIN);
+                    GameManager.Instance.SetState(GameState.GAME_TOUR_LOSE);
                 }
             }
         }

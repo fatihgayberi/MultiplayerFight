@@ -1,6 +1,6 @@
 namespace Wonnasmith
 {
-    interface IDamageable
+    public interface IDamageable
     {
         void Damage(float damageValue);
 

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b41a9014658ee4eb78688fc12a2175, type: 3}
   m_Name: BallClassicData
   m_EditorClassIdentifier: 
-  power: 15
-  damage: 50
+  power: 25
+  damage: 10

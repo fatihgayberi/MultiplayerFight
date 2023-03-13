@@ -8,15 +8,15 @@ namespace Wonnasmith
 
         private void OnEnable()
         {
-            GameManager.LevelWin += OnLevelWin;
+            GameManager.TourWin += OnTourWin;
         }
         private void OnDisable()
         {
-            GameManager.LevelWin -= OnLevelWin;
+            GameManager.TourWin -= OnTourWin;
         }
 
 
-        private void OnLevelWin()
+        private void OnTourWin()
         {
             winPanel.SetActiveNullCheck(true);
         }

@@ -14,13 +14,13 @@ namespace Wonnasmith
             NONE,
 
             BallClassic,
+            BallBig,
             BallSpecial
         }
 
         [Serializable]
         public class BallPoolDatas
         {
-            public BallType poolBallType;
             public GameObject poolBallPrefab;
             public int poolBallCount;
         }
@@ -32,19 +32,37 @@ namespace Wonnasmith
 
         public List<BallBase> testLIST = new List<BallBase>();
 
+
         private void OnEnable()
         {
             GameManager.TourPrepare += OnTourPrepare;
+
+            BallBase.BallGenerated += OnBallGenerated;
         }
         private void OnDisable()
         {
             GameManager.TourPrepare -= OnTourPrepare;
+
+            BallBase.BallGenerated -= OnBallGenerated;
         }
 
 
         private void OnTourPrepare()
         {
             BallPoolInitialize();
+        }
+
+
+        private void OnBallGenerated(BallBase ballBase, BallType ballType)
+        {
+            if (ballBase == null)
+            {
+                return;
+            }
+
+            // Debug.Log("OnBallGenerated::", ballBase.gameObject);
+
+            PoolAdd(ballBase, ballType);
         }
 
 
@@ -56,7 +74,6 @@ namespace Wonnasmith
             }
 
             int balCount = 0;
-            BallType ballType;
             string ballPrefabName;
 
             foreach (BallPoolDatas ballPoolData in ballPoolDatasArray)
@@ -72,29 +89,36 @@ namespace Wonnasmith
                 }
 
                 balCount = ballPoolData.poolBallCount;
-                ballType = ballPoolData.poolBallType;
                 ballPrefabName = ballPoolData.poolBallPrefab.name;
-
-                if (!_ballPoolDictionary.ContainsKey(ballType))
-                {
-                    _ballPoolDictionary.Add(ballType, new List<BallBase>());
-                }
 
                 for (int i = 0; i < balCount; i++)
                 {
                     GameObject createdBall = PhotonNetwork.Instantiate(ballPrefabName, Vector3.zero, Quaternion.identity);
-
-                    if (createdBall != null)
-                    {
-                        BallBase ballBase = createdBall.GetComponent<BallBase>();
-
-                        _ballPoolDictionary[ballType].Add(ballBase);
-
-                        testLIST.Add(ballBase);
-                        ballBase.BallSetActive(false);
-                    }
                 }
             }
+        }
+
+
+        private void PoolAdd(BallBase ballBase, BallType ballType)
+        {
+            if (ballBase == null)
+            {
+                return;
+            }
+
+            if (!_ballPoolDictionary.ContainsKey(ballType))
+            {
+                _ballPoolDictionary.Add(ballType, new List<BallBase>());
+            }
+
+            if (_ballPoolDictionary[ballType].Contains(ballBase))
+            {
+                return;
+            }
+
+            _ballPoolDictionary[ballType].Add(ballBase);
+            testLIST.Add(ballBase);
+            ballBase.BallSetActive(false);
         }
 
 
@@ -102,15 +126,11 @@ namespace Wonnasmith
         {
             if (_ballPoolDictionary == null)
             {
-                Debug.Log("return;::", gameObject);
-
                 return null;
             }
 
             if (!_ballPoolDictionary.ContainsKey(ballType))
             {
-                Debug.Log("return;::", gameObject);
-
                 return null;
             }
 
@@ -129,7 +149,6 @@ namespace Wonnasmith
                 return ballBase;
             }
 
-            Debug.Log("return;::", gameObject);
             return null;
         }
     }

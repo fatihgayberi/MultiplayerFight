@@ -57,6 +57,14 @@ MonoBehaviour:
   - Damage
   - PunRPC_Damage
   - PunRPC_Dead
+  - IsMasterClientCharacterInitialize
+  - PunRPC_IsMasterClientCharacterInitialize
+  - PunRPC_TurnChangeReset
+  - PunRPC_BallPoolInitialize
+  - PunRPC_BallGeneratedEvent
+  - PunRPC_OnBackToLoby
+  - PunRPC_Throwed
+  - PunRPC_SpecialActivator
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Wonnasmith
 {
@@ -7,6 +8,17 @@ namespace Wonnasmith
     {
         [SerializeField] private int maxHealth;
 
-        public int GetMaxHealth() { return maxHealth; }
+        [SerializeField] private WonnRangeDatas rangeDuration;
+        [SerializeField] private WonnRangeDatas rangeCurve;
+        [SerializeField] private WonnRangeDatas rangeThrowPosX;
+        [SerializeField] private WonnRangeDatas rangeThrowPosY;
+
+
+        public int MaxHealth { get => maxHealth; }
+
+        public WonnRangeDatas RangeThrowPosY { get => rangeThrowPosY; }
+        public WonnRangeDatas RangeThrowPosX { get => rangeThrowPosX; }
+        public WonnRangeDatas RangeCurve { get => rangeCurve; }
+        public WonnRangeDatas RangeDuration { get => rangeDuration; }
     }
 }

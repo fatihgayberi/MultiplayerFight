@@ -16,43 +16,26 @@ namespace Wonnasmith
         public delegate void RoomControllerRoomLeft();
         public static event RoomControllerRoomLeft RoomLeft;
 
+        [SerializeField] private PhotonView roomPhotonView;
 
         public override void OnEnable()
         {
             base.OnEnable();
 
             GameManager.TourPrepare += OnTourPrepare;
+
+            UIGameMainPanelController.BackToLoby += OnBackToLoby;
+            RoomController.BackToLoby += OnBackToLoby;
         }
         public override void OnDisable()
         {
             base.OnDisable();
 
             GameManager.TourPrepare -= OnTourPrepare;
+
+            UIGameMainPanelController.BackToLoby -= OnBackToLoby;
+            RoomController.BackToLoby -= OnBackToLoby;
         }
-
-
-        private void OnTourPrepare()
-        {
-            PhotonNetwork.CurrentRoom.IsOpen = false;
-        }
-
-
-        [PunRPC]
-        public void MasterClientLeft()
-        {
-            Debug.Log("MasterClientLeft::::", gameObject);
-
-            BackToLoby?.Invoke();
-        }
-
-
-        public override void OnLeftRoom()
-        {
-            base.OnLeftRoom();
-
-            RoomLeft?.Invoke();
-        }
-
 
 
         private void Start()
@@ -61,6 +44,43 @@ namespace Wonnasmith
             {
                 RoomFulled?.Invoke();
             }
+        }
+
+
+        private void OnApplicationQuit()
+        {
+            roomPhotonView.RPC("PunRPC_OnBackToLoby", RpcTarget.All);
+        }
+
+
+        private void OnBackToLoby()
+        {
+            if (roomPhotonView == null)
+            {
+                return;
+            }
+
+            roomPhotonView.RPC("PunRPC_OnBackToLoby", RpcTarget.All);
+        }
+
+        [PunRPC]
+        public void PunRPC_OnBackToLoby()
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+
+
+        private void OnTourPrepare()
+        {
+            PhotonNetwork.CurrentRoom.IsVisible = false;
+        }
+
+
+        public override void OnLeftRoom()
+        {
+            base.OnLeftRoom();
+
+            RoomLeft?.Invoke();
         }
     }
 }

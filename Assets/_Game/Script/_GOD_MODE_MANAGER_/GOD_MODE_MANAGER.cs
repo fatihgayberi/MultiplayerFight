@@ -84,7 +84,7 @@ namespace Wonnasmith
             if (Input.GetKeyDown(god_Mode_Buttons.win_Button))
             {
                 Debug.Log("<color=green>:::WONNASMITH_IS_HERE <<[]>> GOD_MODE_TestWin:::</color>");
-                GameManager.Instance.SetState(GameState.GAME_WIN);
+                GameManager.Instance.SetState(GameState.GAME_TOUR_WIN);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Wonnasmith
             if (Input.GetKeyDown(god_Mode_Buttons.lose_Button))
             {
                 Debug.Log("<color=red>:::WONNASMITH_IS_HERE <<[]>> GOD_MODE_TestLose:::</color>");
-                GameManager.Instance.SetState(GameState.GAME_LOSE);
+                GameManager.Instance.SetState(GameState.GAME_TOUR_LOSE);
             }
         }
 

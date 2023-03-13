@@ -8,15 +8,15 @@ namespace Wonnasmith
 
         private void OnEnable()
         {
-            GameManager.LevelLose += OnLevelLose;
+            GameManager.TourLose += OnTourLose;
         }
         private void OnDisable()
         {
-            GameManager.LevelLose -= OnLevelLose;
+            GameManager.TourLose -= OnTourLose;
         }
 
 
-        private void OnLevelLose()
+        private void OnTourLose()
         {
             losePanel.SetActiveNullCheck(true);
         }

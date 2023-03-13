@@ -24,14 +24,17 @@ namespace Wonnasmith
 
         private const string functionName_PunRPC_SliderChangeValueWithTime = "PunRPC_SliderChangeValueWithTime";
 
+
         private void OnEnable()
         {
-            CharacterBase.CharacterDamaged += OnCharacterDamaged;
+            PlayerController.CharacterDamaged += OnCharacterDamaged;
+            AIController.CharacterDamaged += OnCharacterDamaged;
             GameManager.TourPrepare += OnTourPrepare;
         }
         private void OnDisable()
         {
-            CharacterBase.CharacterDamaged -= OnCharacterDamaged;
+            PlayerController.CharacterDamaged -= OnCharacterDamaged;
+            AIController.CharacterDamaged -= OnCharacterDamaged;
             GameManager.TourPrepare -= OnTourPrepare;
         }
 
@@ -44,12 +47,12 @@ namespace Wonnasmith
 
         private void OnCharacterDamaged(float maxHealth, float currentHealth, bool isDamagedMasterClient)
         {
-            if (isMasterClientSlider && !isDamagedMasterClient)
+            if (isMasterClientSlider && isDamagedMasterClient)
             {
                 SliderChangeValueWithTime(currentHealth, 0.6f, 0, maxHealth);
             }
 
-            if (!isMasterClientSlider && isDamagedMasterClient)
+            if (!isMasterClientSlider && !isDamagedMasterClient)
             {
                 SliderChangeValueWithTime(currentHealth, 0.6f, 0, maxHealth);
             }
