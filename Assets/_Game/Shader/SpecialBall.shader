@@ -2,8 +2,8 @@ Shader "Wonnasmith/SpecialBall"
 {
     Properties
     {
-        _ColorA ("Color A", Color) = (1,1,1,1)
-        _ColorB ("Color B", Color) = (1,1,1,1)
+        [HDR]_ColorA ("Color A", Color) = (1,1,1,1)
+        [HDR]_ColorB ("Color B", Color) = (1,1,1,1)
         _ColorStart ("Color Start", Range(0,1)) = 0
         _ColorEnd ("Color End", Range(0,1)) = 1
         _WaveSpeed ("Wave Speed ", Float) = 0.01

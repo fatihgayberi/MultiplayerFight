@@ -126,8 +126,6 @@ namespace Wonnasmith
             {
                 if (_isMasterClientCharacter)
                 {
-                    Debug.Log("MASTER atti", gameObject);
-
                     BallThrower(horizontalInput, verticalInput);
                 }
             }
@@ -135,8 +133,6 @@ namespace Wonnasmith
             {
                 if (!_isMasterClientCharacter)
                 {
-                    Debug.Log("DIGER atti", gameObject);
-
                     BallThrower(horizontalInput, verticalInput);
                 }
             }
@@ -160,8 +156,6 @@ namespace Wonnasmith
             {
                 if (_isMasterClientCharacter)
                 {
-                    Debug.Log("MASTER atti", gameObject);
-
                     BallThrowerRandom();
                 }
             }
@@ -169,8 +163,6 @@ namespace Wonnasmith
             {
                 if (!_isMasterClientCharacter)
                 {
-                    Debug.Log("DIGER atti", gameObject);
-
                     BallThrowerRandom();
                 }
             }

@@ -15,7 +15,7 @@ Shader "Wonnasmith/Player"
 
 		_Rate ("Rate", Float) = 0.5
 		_Speed ("Speed", Float) = 0.5
-        _Color ("Color", Color) =  (1, 0, 0, 1)
+        [HDR]_Color ("Color", Color) =  (1, 0, 0, 1)
 
     }
     SubShader

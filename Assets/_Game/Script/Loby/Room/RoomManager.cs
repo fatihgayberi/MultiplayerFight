@@ -38,19 +38,14 @@ namespace Wonnasmith
         }
 
 
-        // dönüp düzeltilecek karmakarışık
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             base.OnRoomListUpdate(roomList);
-
-            Debug.Log("OnRoomListUpdate:: ");
 
             RoomElementController roomElement;
 
             foreach (RoomInfo newRoomInfo in roomList)
             {
-                Debug.Log("newRoomInfo::: ISOPEN" + newRoomInfo.IsVisible);
-
                 if (newRoomInfo.MaxPlayers == 0)
                 {
                     if (_activeRoomDictionary.ContainsKey(newRoomInfo))

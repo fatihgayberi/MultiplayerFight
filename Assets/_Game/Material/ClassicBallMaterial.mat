@@ -37,7 +37,7 @@ Material:
     - _isOutlineActive: 1
     - _isSpecialActive: 1
     m_Colors:
-    - _Color: {r: 0.6417815, g: 0.90588236, b: 0.14117646, a: 1}
+    - _Color: {r: 1.2862746, g: 1.8117647, b: 0.28235295, a: 1}
     - _ColorA: {r: 0.745283, g: 0.11490656, b: 0.10898005, a: 1}
     - _ColorB: {r: 0, g: 0.45599222, b: 1, a: 1}
   m_BuildTextureStacks: []

@@ -60,8 +60,6 @@ namespace Wonnasmith
                 return;
             }
 
-            // Debug.Log("OnBallGenerated::", ballBase.gameObject);
-
             PoolAdd(ballBase, ballType);
         }
 

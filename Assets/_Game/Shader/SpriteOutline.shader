@@ -3,7 +3,7 @@ Shader "Wonnasmith/SpriteOutline"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-		_Color ("Color", Color) =  (1, 1, 1, 1)
+		[HDR]_Color ("Color", Color) =  (1, 1, 1, 1)
 		_Rate ("Rate", Float) = 0.5
 		_Speed ("Speed", Float) = 0.5
 

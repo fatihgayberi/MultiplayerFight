@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SpecialBallMaterial
-  m_Shader: {fileID: 4800000, guid: 0bce5fe78f26e49478c0dec43c02dbaa, type: 3}
+  m_Shader: {fileID: 4800000, guid: 027807de5852c7248b28af1681a4d70c, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
-  - _ISOUTLINEACTIVE_ON
+  - ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -21,23 +21,85 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FoilMask:
+        m_Texture: {fileID: 2800000, guid: 8e6d0e6784b8a4b408fcef267e6187e4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GradientMap:
+        m_Texture: {fileID: 2800000, guid: ff751b383208a05499dbe8dd42282089, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: c15e059731b2c5441a97b3af880e85d6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 937b4aa3495cfe84585138593f9cfb1e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 471c27ae8b5ef5845b937afa466044be, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RandomDirection:
+        m_Texture: {fileID: 2800000, guid: 8e6d0e6784b8a4b408fcef267e6187e4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ColorEnd: 1
-    - _ColorStart: 0.338
-    - _EffectActive: 0
-    - _IsSpecialActive: 1
-    - _Rate: 80
-    - _Speed: 22.19
-    - _WaveSpeed: 0.31
-    - _isOutlineActive: 1
-    - _isSpecialActive: 1
+    - _Brightness: 0.782
+    - _BumpScale: 1
+    - _Contrast: 0.629
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Hue: 0.591
+    - _MaskThreshold: 0.145
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _ParallaxOffset: 0.09
+    - _Saturation: 0.382
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ViewDirectionDisplacement: 42.1
+    - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.14117646, g: 0.90588236, b: 0.7717389, a: 1}
-    - _ColorA: {r: 0.745283, g: 0.11490656, b: 0.10898005, a: 1}
-    - _ColorB: {r: 0, g: 0.45599222, b: 1, a: 1}
+    - _Color: {r: 0.6886792, g: 0.6886792, b: 0.6886792, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FoilColor: {r: 16.34563, g: 12.408987, b: 4.706857, a: 1}
   m_BuildTextureStacks: []

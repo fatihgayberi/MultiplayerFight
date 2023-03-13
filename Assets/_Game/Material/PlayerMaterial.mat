@@ -34,8 +34,9 @@ Material:
     - _Speed: 20
     - _WaveSpeed: 0.8
     - _isOutlineActive: 1
+    - _isSpecialActive: 1
     m_Colors:
-    - _Color: {r: 0.14117646, g: 0.90588236, b: 0.7717389, a: 1}
+    - _Color: {r: 2.2588236, g: 14.494118, b: 12.360785, a: 1}
     - _ColorA: {r: 1, g: 0, b: 0, a: 1}
     - _ColorB: {r: 0, g: 0.26041698, b: 1, a: 1}
   m_BuildTextureStacks: []

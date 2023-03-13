@@ -207,13 +207,11 @@ namespace Wonnasmith
         {
             if (currentSlider == null)
             {
-                Debug.Log("return;::", gameObject);
                 return;
             }
 
             if (TMPtext == null)
             {
-                Debug.Log("return;::", gameObject);
                 return;
             }
 
